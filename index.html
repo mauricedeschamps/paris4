@@ -496,7 +496,7 @@
 <body>
     <div id="installBanner" class="install-banner hidden">
         <div class="install-message">
-            <div class="install-icon">🗼</div>
+            <div class="install-icon">⚜️</div>
             <span id="installText">Install Paris Travel Guide</span>
         </div>
         <div>
@@ -506,7 +506,7 @@
     </div>
 
     <div class="main-content">
-        <h1 id="main-title">🗼 Paris Travel Guide</h1>
+        <h1 id="main-title">⚜️ Paris Travel Guide</h1>
         <div class="sub" id="main-sub">Discover the magic of the City of Light</div>
 
         <div class="lang-switcher">
@@ -650,7 +650,7 @@
         const mainTitle = document.getElementById('main-title');
         const mainSub = document.getElementById('main-sub');
         const body = document.body;
-        const titles = { en:'🗼 Paris Travel Guide', fr:'🗼 Guide de Paris', zh:'🗼 巴黎旅游指南' };
+        const titles = { en:'⚜️ Paris Travel Guide', fr:'⚜️ Guide de Paris', zh:'⚜️ 巴黎旅游指南' };
         const subs = { en:'Discover the magic of the City of Light', fr:'Découvrez la magie de la Ville Lumière', zh:'探索光之城的神奇魅力' };
 
         function handleImageError(img) {
@@ -659,7 +659,7 @@
             if(parent && !parent.querySelector('.image-error')) {
                 const placeholder = document.createElement('div');
                 placeholder.className = 'image-error';
-                placeholder.textContent = '🗼 ' + (img.alt || 'Image coming soon');
+                placeholder.textContent = '⚜️ ' + (img.alt || 'Image coming soon');
                 parent.appendChild(placeholder);
             }
         }
