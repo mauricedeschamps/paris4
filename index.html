@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Paris Travel Guide</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- iOS用メタタグ -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Paris Guide">
+    <link rel="apple-touch-icon" href="icons/icon192.jpg">
+    
+    <!-- テーマカラー -->
+    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+    
+    <style>
+        /* ベースカラースキーム */
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-color: #bb86fc;
+            --card-bg: #242424;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --border-color: #333;
+        }
+
+        .light-mode {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --accent-color: #6200ee;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', 'Hiragino Sans', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 20px 24px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 6px;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+            word-break: break-word;
+        }
+        
+        .sub {
+            text-align: center;
+            margin-bottom: 16px;
+            opacity: 0.85;
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        
+        /* インストールバナー */
+        .install-banner {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-secondary);
+            border-bottom: 2px solid var(--accent-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+        
+        .install-banner.hidden { display: none; }
+        
+        .install-message {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .install-message span {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .install-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(145deg, var(--accent-color), #9b59b6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .install-button {
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        
+        .install-button:hover { opacity: 0.9; }
+        .close-install {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+        
+        .lang-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        
+        .lang-btn {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+            flex: 0 1 auto;
+        }
+        
+        .lang-btn:hover, .lang-btn.active {
+            background-color: var(--accent-color);
+            color: #000;
+            border-color: var(--accent-color);
+        }
+        
+        .theme-toggle {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin: 0 auto 16px;
+            display: block;
+            transition: 0.2s;
+            width: fit-content;
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--accent-color);
+            color: #000;
+        }
+        
+        .back-btn {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin: 8px 0;
+            display: inline-block;
+            transition: 0.2s;
+        }
+        
+        .back-btn:hover {
+            background-color: var(--accent-color);
+            color: #000;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            margin: 8px 0 16px;
+        }
+
+        .spots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .spot-card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .spot-card:active { transform: scale(0.98); }
+        .spot-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+        }
+        
+        .card-img {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            background-color: var(--bg-secondary);
+            position: relative;
+        }
+        
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .spot-card:hover .card-img img { transform: scale(1.05); }
+        
+        .card-content {
+            padding: 18px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-title {
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+            color: var(--accent-color);
+            line-height: 1.3;
+        }
+        
+        .card-category {
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.95rem;
+            background-color: rgba(187, 134, 252, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            width: fit-content;
+        }
+        
+        .card-best-time {
+            background-color: rgba(187, 134, 252, 0.15);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            margin: 6px 0 8px;
+            border-left: 3px solid var(--accent-color);
+            width: fit-content;
+            color: var(--text-secondary);
+        }
+        
+        .card-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            flex-grow: 1;
+        }
+        
+        .detail-container {
+            background-color: var(--card-bg);
+            border-radius: 28px;
+            padding: 28px;
+            margin: 16px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        .detail-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+        
+        .detail-title {
+            font-size: 2.2rem;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        
+        .detail-category, .detail-best-time {
+            margin-bottom: 12px;
+        }
+        .detail-best-time {
+            background-color: rgba(187, 134, 252, 0.15);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 40px;
+            border-left: 4px solid var(--accent-color);
+            font-size: 0.95rem;
+        }
+        
+        .detail-desc {
+            font-size: 1.1rem;
+            margin: 20px 0;
+            line-height: 1.8;
+            white-space: pre-line;
+            color: var(--text-primary);
+        }
+        
+        .transport-section {
+            background-color: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-color);
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+        }
+        
+        .transport-info {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+        .transport-info strong { color: var(--accent-color); }
+        
+        .official-link {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: #000;
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            margin: 16px 0 8px;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        .official-link:active { opacity: 0.8; transform: scale(0.98); }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 10px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            width: 100%;
+            color: var(--text-secondary);
+        }
+        
+        .contact-email {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            word-break: break-all;
+        }
+        
+        .hidden { display: none !important; }
+
+        .image-error {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-style: italic;
+            height: 100%;
+            width: 100%;
+            font-size: 1rem;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        /* スポンサー枠スタイル */
+        .sponsor-section {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+            box-shadow: var(--shadow);
+        }
+        
+        .sponsor-link { display: block; width: 100%; text-decoration: none; }
+        .sponsor-img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.2s;
+        }
+        .sponsor-link:hover .sponsor-img { transform: scale(1.01); }
+        
+        .map-container {
+            margin: 20px 0;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            background-color: var(--bg-secondary);
+        }
+        .map-container iframe {
+            display: block;
+            width: 100%;
+            height: 320px;
+            border: 0;
+        }
+        
+        .paypal-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 15px 0;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 3px; }
+        
+        @media (max-width: 640px) {
+            h1 { font-size: 1.8rem; }
+            .main-content { padding: 12px 16px 20px; }
+            .card-title { font-size: 1.4rem; }
+            .detail-title { font-size: 1.8rem; }
+            .detail-container { padding: 20px; }
+            .detail-image { max-height: 280px; }
+            .map-container iframe { height: 260px; }
+            .sponsor-img { max-height: 140px; }
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 1.6rem; }
+            .lang-btn { padding: 6px 12px; font-size: 0.85rem; }
+            .spots-grid { grid-template-columns: 1fr; }
+            .card-img { height: 180px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="installBanner" class="install-banner hidden">
+        <div class="install-message">
+            <div class="install-icon">🗼</div>
+            <span id="installText">Install Paris Travel Guide</span>
+        </div>
+        <div>
+            <button id="installButton" class="install-button">Install</button>
+            <button id="closeInstall" class="close-install">✕</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h1 id="main-title">🗼 Paris Travel Guide</h1>
+        <div class="sub" id="main-sub">Discover the magic of the City of Light</div>
+
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+            <button class="lang-btn" data-lang="fr">🇫🇷 Français</button>
+            <button class="lang-btn" data-lang="zh">🇨🇳 中文</button>
+        </div>
+
+        <button class="theme-toggle" id="themeToggle">🌙 Dark / ☀️ Light</button>
+
+        <div class="nav-container" id="backButtonContainer" style="display: none;">
+            <button class="back-btn" id="backToList">← Back to list</button>
+        </div>
+
+        <div id="listView">
+            <!-- 上部スポンサー枠 (画像URL・リンクURLは下部スクリプトのSPONSOR_CONFIGで編集可能) -->
+            <div id="topSponsor" class="sponsor-section">
+                <a href="#" id="topSponsorLink" class="sponsor-link" target="_blank" rel="noopener">
+                    <img id="topSponsorImg" class="sponsor-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Crect width='800' height='200' fill='%23242424'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23bb86fc' font-size='24' font-family='sans-serif'%3ETop Sponsor - Edit URL%3C/text%3E%3C/svg%3E" alt="Top Sponsor">
+                </a>
+            </div>
+
+            <!-- PayPal フォーム -->
+            <div>
+                <style>.pp-ZLNXCQFNL2RYE{text-align:center;border:none;border-radius:0.25rem;min-width:11.625rem;padding:0 2rem;height:2.625rem;font-weight:bold;background-color:#FFD140;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.25rem;cursor:pointer;}</style>
+                <form action="https://www.paypal.com/ncp/payment/ZLNXCQFNL2RYE" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+                    <input class="pp-ZLNXCQFNL2RYE" type="submit" value="Pay for this app" />
+                    <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
+                    <section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;"/></section>
+                </form>
+            </div>
+
+            <!-- Google Map (シテ島中心: パリの中心) -->
+            <div class="map-container">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d83998.94722659825!2d2.2769923854246837!3d48.85572407538275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e671e8b831c0ed%3A0x7bc4d74af7be7c0!2s%C3%8Ele%20de%20la%20Cit%C3%A9!5e0!3m2!1sen!2sfr!4v1712000000000!5m2!1sen!2sfr"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Île de la Cité Map">
+                </iframe>
+            </div>
+
+            <div class="spots-grid" id="spotsContainer"></div>
+
+            <!-- 下部スポンサー枠 -->
+            <div id="bottomSponsor" class="sponsor-section">
+                <a href="#" id="bottomSponsorLink" class="sponsor-link" target="_blank" rel="noopener">
+                    <img id="bottomSponsorImg" class="sponsor-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Crect width='800' height='200' fill='%23242424'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23bb86fc' font-size='24' font-family='sans-serif'%3EBottom Sponsor - Edit URL%3C/text%3E%3C/svg%3E" alt="Bottom Sponsor">
+                </a>
+            </div>
+        </div>
+
+        <div id="detailView" class="hidden">
+            <div class="detail-container" id="detailContent"></div>
+        </div>
+
+        <footer>
+            <p>© 2026 Paris Travel Guide</p>
+            <p>📧 <a href="mailto:mementomorikatsu@gmail.com" class="contact-email">mementomorikatsu@gmail.com</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // ================= スポンサー設定（ここを編集するだけでOK） =================
+        const SPONSOR_CONFIG = {
+            top: {
+                imgUrl: "",   // 例: "https://example.com/top-banner.jpg"
+                linkUrl: ""   // 例: "https://sponsor-site.com"
+            },
+            bottom: {
+                imgUrl: "",   // 例: "https://example.com/bottom-banner.jpg"
+                linkUrl: ""   // 例: "https://another-sponsor.com"
+            }
+        };
+        // ====================================================================
+
+        // 全言語データ (英語, フランス語, 中国語)
+        const attractionsData = { en: [], fr: [], zh: [] };
+
+        // 英語データ (オリジナル保持)
+        attractionsData.en = [
+            { id:1, title:"Eiffel Tower", category:"Iconic Landmark", location:"Champ de Mars, 5 Avenue Anatole France, Paris", bestTime:"Year-round (Best: Sunset)", desc:"The iconic iron lattice tower on the Champ de Mars. Standing at 330 meters tall, it's one of the most recognizable structures in the world.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/800px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg", airportTransport:"RER B to Saint-Michel → RER C to Champ de Mars", cityTransport:"Metro: Line 6 to Bir-Hakeim, Line 9 to Trocadéro.", officialUrl:"https://www.toureiffel.paris/en" },
+            { id:2, title:"Louvre Museum", category:"Cultural Institution", location:"Rue de Rivoli, 75001 Paris", bestTime:"Year-round (Best: Wed/Fri evenings)", desc:"World's largest art museum. Home to the Mona Lisa, Venus de Milo, and over 35,000 works.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Louvre_Museum_Wikimedia_Commons.jpg/800px-Louvre_Museum_Wikimedia_Commons.jpg", airportTransport:"RER B to Châtelet - Les Halles", cityTransport:"Metro: Line 1 to Palais Royal - Musée du Louvre.", officialUrl:"https://www.louvre.fr/en" },
+            { id:3, title:"Notre-Dame Cathedral", category:"Architectural Marvel", location:"6 Parvis Notre-Dame - Pl. Jean-Paul II", bestTime:"Year-round (Best: Morning)", desc:"Medieval Catholic cathedral on Île de la Cité. French Gothic architecture, currently under reconstruction.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Notre-Dame_de_Paris_2013.jpg/800px-Notre-Dame_de_Paris_2013.jpg", airportTransport:"RER B to Saint-Michel - Notre-Dame", cityTransport:"Metro: Line 4 to Cité", officialUrl:"https://www.notredamedeparis.fr/en/" },
+            { id:4, title:"Montmartre & Sacré-Cœur", category:"Urban Oasis", location:"35 Rue du Chevalier de la Barre", bestTime:"Spring-Fall (Best: Sunrise)", desc:"Historic artistic neighborhood crowned by the white-domed Basilica of Sacré-Cœur. Panoramic views.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Sacré-Cœur_%28basilique%29.jpg/800px-Sacré-Cœur_%28basilique%29.jpg", airportTransport:"RER B to Gare du Nord → Metro Line 2 to Anvers", cityTransport:"Metro: Line 2 to Anvers, Line 12 to Abbesses", officialUrl:"https://www.sacre-coeur-montmartre.com/english/" },
+            { id:5, title:"Musée d'Orsay", category:"Cultural Institution", location:"1 Rue de la Légion d'Honneur", bestTime:"Year-round (Best: Tuesday mornings)", desc:"Housed in a former railway station. Largest collection of impressionist masterpieces.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Musee_d%27Orsay_2009.jpg/800px-Musee_d%27Orsay_2009.jpg", airportTransport:"RER B to Saint-Michel → RER C to Musée d'Orsay", cityTransport:"Metro: Line 12 to Solférino, RER C", officialUrl:"https://www.musee-orsay.fr/en" },
+            { id:6, title:"Champs-Élysées & Arc de Triomphe", category:"Iconic Landmark", location:"Place Charles de Gaulle", bestTime:"Year-round (Best: Evening)", desc:"Famous avenue from Concorde to Arc de Triomphe. Lined with cafes and luxury shops.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Arc_de_Triomphe_fh000025.jpg/800px-Arc_de_Triomphe_fh000025.jpg", airportTransport:"RER B to Charles de Gaulle - Étoile", cityTransport:"Metro: Lines 1,2,6 to Charles de Gaulle - Étoile", officialUrl:"https://www.paris-arc-de-triomphe.fr/en" },
+            { id:7, title:"Palace of Versailles", category:"Architectural Marvel", location:"Place d'Armes, Versailles", bestTime:"Spring-Fall (Best: Tuesday mornings)", desc:"Former royal residence built by Louis XIV. Hall of Mirrors and extensive gardens.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Chateau_de_Versailles_2013.jpg/800px-Chateau_de_Versailles_2013.jpg", airportTransport:"RER C to Versailles Château", cityTransport:"RER C from central Paris", officialUrl:"https://en.chateauversailles.fr/" },
+            { id:8, title:"Sainte-Chapelle", category:"Architectural Marvel", location:"10 Boulevard du Palais", bestTime:"Year-round (Sunny afternoons)", desc:"Gothic chapel renowned for stunning stained glass windows depicting 1,113 biblical scenes.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Sainte_Chapelle_Interior.jpg/800px-Sainte_Chapelle_Interior.jpg", airportTransport:"RER B to Saint-Michel - Notre-Dame", cityTransport:"Metro: Line 4 to Cité", officialUrl:"https://www.sainte-chapelle.fr/en/" },
+            { id:9, title:"Luxembourg Gardens", category:"Urban Oasis", location:"Rue de Médicis", bestTime:"Spring-Summer (Afternoons)", desc:"60-acre park with tree-lined promenades, flowerbeds, and the Luxembourg Palace.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Jardin_du_Luxembourg_Paris.jpg/800px-Jardin_du_Luxembourg_Paris.jpg", airportTransport:"RER B to Luxembourg", cityTransport:"RER B to Luxembourg", officialUrl:"https://en.parisinfo.com/paris-museum-monument/71371/Jardin-du-Luxembourg" },
+            { id:10, title:"Moulin Rouge", category:"Entertainment Hub", location:"82 Boulevard de Clichy", bestTime:"Year-round (Evening shows)", desc:"World-famous cabaret, birthplace of the modern can-can dance.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Moulin_Rouge_Paris.jpg/800px-Moulin_Rouge_Paris.jpg", airportTransport:"RER B to Gare du Nord → Metro Line 2 to Blanche", cityTransport:"Metro: Line 2 to Blanche", officialUrl:"https://www.moulinrouge.fr/" },
+            { id:11, title:"Père Lachaise Cemetery", category:"Cultural Institution", location:"16 Rue du Repos", bestTime:"Weekday mornings", desc:"Largest cemetery in Paris, graves of Jim Morrison, Oscar Wilde, Édith Piaf.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Pere_Lachaise_Cemetery_Paris.jpg/800px-Pere_Lachaise_Cemetery_Paris.jpg", airportTransport:"RER B to Gare du Nord → Metro Line 2 to Père Lachaise", cityTransport:"Metro: Line 2 to Père Lachaise", officialUrl:"https://www.pere-lachaise.com/" },
+            { id:12, title:"Seine River Cruise", category:"Urban Oasis", location:"Various departure points", bestTime:"Spring-Fall (Evening for lights)", desc:"Experience Paris from the water, passing by illuminated landmarks.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Seine_cruise_Paris.jpg/800px-Seine_cruise_Paris.jpg", airportTransport:"RER B to Saint-Michel", cityTransport:"Metro to Pont Neuf", officialUrl:"https://www.bateauxparisiens.com/en.html" }
+        ];
+
+        // フランス語データ (既存の簡易版から充実)
+        attractionsData.fr = attractionsData.en.map(spot => ({ ...spot, 
+            title: {1:"Tour Eiffel",2:"Musée du Louvre",3:"Cathédrale Notre-Dame",4:"Montmartre & Sacré-Cœur",5:"Musée d'Orsay",6:"Champs-Élysées & Arc de Triomphe",7:"Château de Versailles",8:"Sainte-Chapelle",9:"Jardin du Luxembourg",10:"Moulin Rouge",11:"Cimetière du Père-Lachaise",12:"Croisière sur la Seine"}[spot.id],
+            category: {1:"Monument emblématique",2:"Institution culturelle",3:"Merveille architecturale",4:"Oasis urbain",5:"Institution culturelle",6:"Monument emblématique",7:"Merveille architecturale",8:"Merveille architecturale",9:"Oasis urbain",10:"Centre de divertissement",11:"Institution culturelle",12:"Oasis urbain"}[spot.id],
+            desc: {1:"Tour en treillis de fer sur le Champ de Mars, 330 mètres. Vue imprenable sur Paris.",2:"Plus grand musée d'art au monde. Abrite la Joconde et la Vénus de Milo.",3:"Cathédrale gothique sur l'Île de la Cité, actuellement en reconstruction.",4:"Quartier artistique avec la basilique du Sacré-Cœur. Vue panoramique.",5:"Installé dans une ancienne gare, collection impressionniste exceptionnelle.",6:"Avenue célèbre menant à l'Arc de Triomphe. Boutiques et cafés.",7:"Ancienne résidence royale avec la Galerie des Glaces et jardins.",8:"Chapelle gothique aux magnifiques vitraux représentant 1113 scènes.",9:"Parc de 24 hectares avec promenades et Palais du Luxembourg.",10:"Célèbre cabaret, berceau du cancan moderne.",11:"Plus grand cimetière de Paris, tombes de nombreuses célébrités.",12:"Découvrez Paris depuis l'eau avec une croisière sur la Seine."}[spot.id],
+            bestTime: {1:"Toute l'année (Coucher de soleil)",2:"Mercredi/Vendredi soir",3:"Matin (calme)",4:"Printemps-Automne (Lever du soleil)",5:"Mardi matin",6:"Soir (lumières)",7:"Mardi matin",8:"Après-midi ensoleillé",9:"Printemps-Été (Après-midi)",10:"Spectacles en soirée",11:"Matin en semaine",12:"Soir (monuments illuminés)"}[spot.id]
+        }));
+        // 中国語データ
+        attractionsData.zh = attractionsData.en.map(spot => ({ ...spot,
+            title: {1:"埃菲尔铁塔",2:"卢浮宫博物馆",3:"巴黎圣母院",4:"蒙马特高地 & 圣心大教堂",5:"奥赛博物馆",6:"香榭丽舍大街 & 凯旋门",7:"凡尔赛宫",8:"圣礼拜堂",9:"卢森堡公园",10:"红磨坊",11:"拉雪兹神父公墓",12:"塞纳河游船"}[spot.id],
+            category: {1:"地标建筑",2:"文化机构",3:"建筑奇观",4:"城市绿洲",5:"文化机构",6:"地标建筑",7:"建筑奇观",8:"建筑奇观",9:"城市绿洲",10:"娱乐中心",11:"文化机构",12:"城市绿洲"}[spot.id],
+            desc: {1:"战神广场上的标志性铁塔，高330米，可欣赏巴黎壮丽景色。",2:"世界最大的艺术博物馆，收藏《蒙娜丽莎》等超过35,000件作品。",3:"位于西岱岛的中世纪天主教教堂，哥特式建筑，火灾后重建中。",4:"历史艺术区，白色圆顶圣心大教堂可俯瞰巴黎全景。",5:"前火车站改建，拥有最大规模的印象派杰作收藏。",6:"著名大街，从协和广场延伸至凯旋门，两旁遍布咖啡馆和奢侈品店。",7:"路易十四建造的昔日皇家住所，拥有镜厅和广阔花园。",8:"哥特式教堂，以描绘1,113个圣经场景的彩色玻璃窗闻名。",9:"60英亩公园，拥有林荫大道、花坛和卢森堡宫。",10:"世界闻名的歌舞表演厅，现代康康舞的发源地。",11:"巴黎最大公墓，安葬着吉姆·莫里森、奥斯卡·王尔德等名人。",12:"从水上体验巴黎，夜晚经过灯火通明的主要地标。"}[spot.id],
+            bestTime: {1:"全年（最佳：日落）",2:"周三/周五晚上",3:"全年（最佳：清晨）",4:"春秋（最佳：日出）",5:"全年（最佳：周二上午）",6:"全年（最佳：夜晚灯光）",7:"春秋（最佳：周二上午）",8:"阳光明媚的下午",9:"春夏（最佳：下午）",10:"全年（晚间表演）",11:"工作日上午",12:"春秋（最佳：夜晚）"}[spot.id]
+        }));
+
+        // PWAインストール処理
+        let deferredPrompt;
+        const installBanner = document.getElementById('installBanner');
+        const installButton = document.getElementById('installButton');
+        const closeInstall = document.getElementById('closeInstall');
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBanner.classList.remove('hidden');
+        });
+        installButton.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            installBanner.classList.add('hidden');
+        });
+        closeInstall.addEventListener('click', () => installBanner.classList.add('hidden'));
+
+        // アプリ状態
+        let currentLang = 'en';
+        let currentSpotId = null;
+        const container = document.getElementById('spotsContainer');
+        const detailView = document.getElementById('detailView');
+        const listView = document.getElementById('listView');
+        const detailContent = document.getElementById('detailContent');
+        const backButtonContainer = document.getElementById('backButtonContainer');
+        const langBtns = document.querySelectorAll('.lang-btn');
+        const themeToggle = document.getElementById('themeToggle');
+        const mainTitle = document.getElementById('main-title');
+        const mainSub = document.getElementById('main-sub');
+        const body = document.body;
+        const titles = { en:'🗼 Paris Travel Guide', fr:'🗼 Guide de Paris', zh:'🗼 巴黎旅游指南' };
+        const subs = { en:'Discover the magic of the City of Light', fr:'Découvrez la magie de la Ville Lumière', zh:'探索光之城的神奇魅力' };
+
+        function handleImageError(img) {
+            img.style.display = 'none';
+            const parent = img.parentNode;
+            if(parent && !parent.querySelector('.image-error')) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'image-error';
+                placeholder.textContent = '🗼 ' + (img.alt || 'Image coming soon');
+                parent.appendChild(placeholder);
+            }
+        }
+
+        function renderSpots(lang) {
+            const data = attractionsData[lang];
+            if(!data) return;
+            container.innerHTML = '';
+            data.forEach(spot => {
+                const card = document.createElement('div');
+                card.className = 'spot-card';
+                const img = document.createElement('img');
+                img.src = spot.imageUrl;
+                img.alt = spot.title;
+                img.loading = 'lazy';
+                img.onerror = function() { handleImageError(this); };
+                const imgDiv = document.createElement('div');
+                imgDiv.className = 'card-img';
+                imgDiv.appendChild(img);
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'card-content';
+                contentDiv.innerHTML = `
+                    <div class="card-title">${spot.title}</div>
+                    <div class="card-category">${spot.category}</div>
+                    <div class="card-best-time">📅 ${spot.bestTime}</div>
+                    <div class="card-desc">${spot.desc.substring(0, 90)}...</div>
+                `;
+                card.appendChild(imgDiv);
+                card.appendChild(contentDiv);
+                card.addEventListener('click', () => showDetail(spot.id));
+                container.appendChild(card);
+            });
+        }
+
+        function getPaypalFormHTML() {
+            return `<div class="paypal-container"><style>.pp-ZLNXCQFNL2RYE{text-align:center;border:none;border-radius:0.25rem;min-width:11.625rem;padding:0 2rem;height:2.625rem;font-weight:bold;background-color:#FFD140;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.25rem;cursor:pointer;}</style><form action="https://www.paypal.com/ncp/payment/ZLNXCQFNL2RYE" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;"><input class="pp-ZLNXCQFNL2RYE" type="submit" value="Pay for this app" /><img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" /><section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;"/></section></form></div>`;
+        }
+
+        function showDetail(spotId) {
+            currentSpotId = spotId;
+            const spot = attractionsData[currentLang].find(s => s.id === spotId);
+            if(!spot) return;
+            const officialLinkText = { en:'Official Website →', fr:'Site Officiel →', zh:'官方网站 →' };
+            detailContent.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = spot.imageUrl;
+            img.alt = spot.title;
+            img.className = 'detail-image';
+            img.loading = 'lazy';
+            img.onerror = function() { handleImageError(this); };
+            detailContent.appendChild(img);
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = `
+                <div class="detail-title">${spot.title}</div>
+                <div class="detail-category">📍 ${spot.category}</div>
+                <div class="detail-best-time">📅 ${spot.bestTime}</div>
+                <div style="margin:8px 0;"><strong>📍 ${spot.location}</strong></div>
+                <div class="detail-desc">${spot.desc.replace(/\n/g, '<br>')}</div>
+                <div class="transport-section">
+                    <h3 class="section-title">🚇 Transportation</h3>
+                    <div class="transport-info"><strong>From Airport:</strong> ${spot.airportTransport}</div>
+                    <div class="transport-info"><strong>Within City:</strong> ${spot.cityTransport}</div>
+                </div>
+                <a href="${spot.officialUrl}" class="official-link" target="_blank" rel="noopener">${officialLinkText[currentLang]}</a>
+            `;
+            detailContent.appendChild(textDiv);
+            detailContent.appendChild(document.createElement('div')).innerHTML = getPaypalFormHTML();
+            listView.classList.add('hidden');
+            detailView.classList.remove('hidden');
+            backButtonContainer.style.display = 'flex';
+            mainTitle.style.display = 'none';
+            mainSub.style.display = 'none';
+            window.scrollTo(0,0);
+        }
+
+        function backToList() {
+            listView.classList.remove('hidden');
+            detailView.classList.add('hidden');
+            backButtonContainer.style.display = 'none';
+            mainTitle.style.display = 'block';
+            mainSub.style.display = 'block';
+            currentSpotId = null;
+            window.scrollTo(0,0);
+        }
+
+        function changeLanguage(lang) {
+            if(!attractionsData[lang]) return;
+            currentLang = lang;
+            renderSpots(currentLang);
+            if(currentSpotId) {
+                const exists = attractionsData[currentLang]?.some(s => s.id === currentSpotId);
+                exists ? showDetail(currentSpotId) : backToList();
+            }
+            mainTitle.textContent = titles[lang];
+            mainSub.textContent = subs[lang];
+            langBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+            document.getElementById('installText').innerText = (lang === 'zh' ? '安装巴黎旅行指南' : (lang === 'fr' ? 'Installer Paris Guide' : 'Install Paris Travel Guide'));
+        }
+
+        function setupSponsors() {
+            const topImg = document.getElementById('topSponsorImg');
+            const topLink = document.getElementById('topSponsorLink');
+            const bottomImg = document.getElementById('bottomSponsorImg');
+            const bottomLink = document.getElementById('bottomSponsorLink');
+            if(SPONSOR_CONFIG.top.imgUrl && SPONSOR_CONFIG.top.imgUrl.trim()) topImg.src = SPONSOR_CONFIG.top.imgUrl;
+            if(SPONSOR_CONFIG.top.linkUrl && SPONSOR_CONFIG.top.linkUrl.trim()) topLink.href = SPONSOR_CONFIG.top.linkUrl;
+            if(SPONSOR_CONFIG.bottom.imgUrl && SPONSOR_CONFIG.bottom.imgUrl.trim()) bottomImg.src = SPONSOR_CONFIG.bottom.imgUrl;
+            if(SPONSOR_CONFIG.bottom.linkUrl && SPONSOR_CONFIG.bottom.linkUrl.trim()) bottomLink.href = SPONSOR_CONFIG.bottom.linkUrl;
+        }
+
+        langBtns.forEach(btn => btn.addEventListener('click', () => changeLanguage(btn.dataset.lang)));
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            const isDarkNow = !body.classList.contains('light-mode');
+            themeToggle.innerHTML = isDarkNow ? '🌙 Dark / ☀️ Light' : '☀️ Light / 🌙 Dark';
+        });
+        document.getElementById('backToList').addEventListener('click', backToList);
+        
+        renderSpots('en');
+        setupSponsors();
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(e => console.log('SW error:', e)));
+        }
+    </script>
+</body>
+</html>
