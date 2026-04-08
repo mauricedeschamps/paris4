@@ -3,8 +3,8 @@ const urlsToCache = [
   '.',
   'index.html',
   'manifest.json',
-  'icons/icon192.jpg',
-  'icons/icon512.jpg'
+  'icons/icon-192.jpg',
+  'icons/icon-512.jpg'
 ];
 
 // インストール時にキャッシュ
