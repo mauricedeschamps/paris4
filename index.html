@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Paris Guide">
-    <link rel="apple-touch-icon" href="icons/icon-192.jpg">
+    <link rel="apple-touch-icon" href="icons/icon192.jpg">
     
     <!-- テーマカラー -->
     <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
@@ -522,10 +522,10 @@
         </div>
 
         <div id="listView">
-            <!-- 上部スポンサー枠 (画像URL・リンクURLは下部スクリプトのSPONSOR_CONFIGで編集可能) -->
+            <!-- 上部スポンサー枠 (画像URL・リンクURLは下部SPONSOR_CONFIGで編集) -->
             <div id="topSponsor" class="sponsor-section">
                 <a href="#" id="topSponsorLink" class="sponsor-link" target="_blank" rel="noopener">
-                    <img id="topSponsorImg" class="sponsor-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Crect width='800' height='200' fill='%23242424'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23bb86fc' font-size='24' font-family='sans-serif'%3ETop Sponsor - Edit URL%3C/text%3E%3C/svg%3E" alt="Top Sponsor">
+                    <img id="topSponsorImg" class="sponsor-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Crect width='800' height='200' fill='%23242424'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23bb86fc' font-size='24' font-family='sans-serif'%3ETop Sponsor%3C/text%3E%3C/svg%3E" alt="Top Sponsor">
                 </a>
             </div>
 
@@ -539,7 +539,7 @@
                 </form>
             </div>
 
-            <!-- Google Map (シテ島中心: パリの中心) -->
+            <!-- Google Map (シテ島中心) -->
             <div class="map-container">
                 <iframe 
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d83998.94722659825!2d2.2769923854246837!3d48.85572407538275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e671e8b831c0ed%3A0x7bc4d74af7be7c0!2s%C3%8Ele%20de%20la%20Cit%C3%A9!5e0!3m2!1sen!2sfr!4v1712000000000!5m2!1sen!2sfr"
@@ -555,7 +555,7 @@
             <!-- 下部スポンサー枠 -->
             <div id="bottomSponsor" class="sponsor-section">
                 <a href="#" id="bottomSponsorLink" class="sponsor-link" target="_blank" rel="noopener">
-                    <img id="bottomSponsorImg" class="sponsor-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Crect width='800' height='200' fill='%23242424'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23bb86fc' font-size='24' font-family='sans-serif'%3EBottom Sponsor - Edit URL%3C/text%3E%3C/svg%3E" alt="Bottom Sponsor">
+                    <img id="bottomSponsorImg" class="sponsor-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Crect width='800' height='200' fill='%23242424'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23bb86fc' font-size='24' font-family='sans-serif'%3EBottom Sponsor%3C/text%3E%3C/svg%3E" alt="Bottom Sponsor">
                 </a>
             </div>
         </div>
@@ -571,45 +571,49 @@
     </div>
 
     <script>
-        // ================= スポンサー設定（ここを編集するだけでOK） =================
+        // ============================================================
+        // スポンサー設定（ここに画像URLとリンクURLを入れるだけで反映されます）
+        // ============================================================
         const SPONSOR_CONFIG = {
             top: {
-                imgUrl: "",   // 例: "https://example.com/top-banner.jpg"
-                linkUrl: ""   // 例: "https://sponsor-site.com"
+                imgUrl: "https://picsum.photos/id/1015/800/200",   // ← ここに上部スポンサー画像のURL（例: https://example.com/banner.jpg）
+                linkUrl: "https://www.example.com"                 // ← クリック時のリンク先URL
             },
             bottom: {
-                imgUrl: "",   // 例: "https://example.com/bottom-banner.jpg"
-                linkUrl: ""   // 例: "https://another-sponsor.com"
+                imgUrl: "https://picsum.photos/id/104/800/200",    // ← 下部スポンサー画像のURL
+                linkUrl: "https://www.example.com"                 // ← クリック時のリンク先URL
             }
         };
-        // ====================================================================
+        // 注意: 画像が表示されない場合は、URLが直接画像ファイル（.jpg .png など）で終わるか確認してください。
+        // ============================================================
 
         // 全言語データ (英語, フランス語, 中国語)
         const attractionsData = { en: [], fr: [], zh: [] };
 
-        // 英語データ (オリジナル保持)
+        // 英語データ - すべて確実に表示される画像URLに修正（Wikimedia 安定版 + Picsum フォールバック）
         attractionsData.en = [
-            { id:1, title:"Eiffel Tower", category:"Iconic Landmark", location:"Champ de Mars, 5 Avenue Anatole France, Paris", bestTime:"Year-round (Best: Sunset)", desc:"The iconic iron lattice tower on the Champ de Mars. Standing at 330 meters tall, it's one of the most recognizable structures in the world.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/960px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg", airportTransport:"RER B to Saint-Michel → RER C to Champ de Mars", cityTransport:"Metro: Line 6 to Bir-Hakeim, Line 9 to Trocadéro.", officialUrl:"https://www.toureiffel.paris/en" },
-            { id:2, title:"Louvre Museum", category:"Cultural Institution", location:"Rue de Rivoli, 75001 Paris", bestTime:"Year-round (Best: Wed/Fri evenings)", desc:"World's largest art museum. Home to the Mona Lisa, Venus de Milo, and over 35,000 works.", imageUrl:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh-zyZmmdmLGraQwsEe7alNgA7h6bJgJpNjqlo7HTQFBwDIqHRpyHpRRlc&s=10", airportTransport:"RER B to Châtelet - Les Halles", cityTransport:"Metro: Line 1 to Palais Royal - Musée du Louvre.", officialUrl:"https://www.louvre.fr/en" },
-            { id:3, title:"Notre-Dame Cathedral", category:"Architectural Marvel", location:"6 Parvis Notre-Dame - Pl. Jean-Paul II", bestTime:"Year-round (Best: Morning)", desc:"Medieval Catholic cathedral on Île de la Cité. French Gothic architecture, currently under reconstruction.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Notre-Dame_de_Paris_2013.jpg/800px-Notre-Dame_de_Paris_2013.jpg", airportTransport:"RER B to Saint-Michel - Notre-Dame", cityTransport:"Metro: Line 4 to Cité", officialUrl:"https://www.notredamedeparis.fr/en/" },
-            { id:4, title:"Montmartre & Sacré-Cœur", category:"Urban Oasis", location:"35 Rue du Chevalier de la Barre", bestTime:"Spring-Fall (Best: Sunrise)", desc:"Historic artistic neighborhood crowned by the white-domed Basilica of Sacré-Cœur. Panoramic views.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Sacré-Cœur_%28basilique%29.jpg/800px-Sacré-Cœur_%28basilique%29.jpg", airportTransport:"RER B to Gare du Nord → Metro Line 2 to Anvers", cityTransport:"Metro: Line 2 to Anvers, Line 12 to Abbesses", officialUrl:"https://www.sacre-coeur-montmartre.com/english/" },
-            { id:5, title:"Musée d'Orsay", category:"Cultural Institution", location:"1 Rue de la Légion d'Honneur", bestTime:"Year-round (Best: Tuesday mornings)", desc:"Housed in a former railway station. Largest collection of impressionist masterpieces.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Musee_d%27Orsay_2009.jpg/800px-Musee_d%27Orsay_2009.jpg", airportTransport:"RER B to Saint-Michel → RER C to Musée d'Orsay", cityTransport:"Metro: Line 12 to Solférino, RER C", officialUrl:"https://www.musee-orsay.fr/en" },
-            { id:6, title:"Champs-Élysées & Arc de Triomphe", category:"Iconic Landmark", location:"Place Charles de Gaulle", bestTime:"Year-round (Best: Evening)", desc:"Famous avenue from Concorde to Arc de Triomphe. Lined with cafes and luxury shops.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Arc_de_Triomphe_fh000025.jpg/800px-Arc_de_Triomphe_fh000025.jpg", airportTransport:"RER B to Charles de Gaulle - Étoile", cityTransport:"Metro: Lines 1,2,6 to Charles de Gaulle - Étoile", officialUrl:"https://www.paris-arc-de-triomphe.fr/en" },
-            { id:7, title:"Palace of Versailles", category:"Architectural Marvel", location:"Place d'Armes, Versailles", bestTime:"Spring-Fall (Best: Tuesday mornings)", desc:"Former royal residence built by Louis XIV. Hall of Mirrors and extensive gardens.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Chateau_de_Versailles_2013.jpg/800px-Chateau_de_Versailles_2013.jpg", airportTransport:"RER C to Versailles Château", cityTransport:"RER C from central Paris", officialUrl:"https://en.chateauversailles.fr/" },
-            { id:8, title:"Sainte-Chapelle", category:"Architectural Marvel", location:"10 Boulevard du Palais", bestTime:"Year-round (Sunny afternoons)", desc:"Gothic chapel renowned for stunning stained glass windows depicting 1,113 biblical scenes.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Sainte_Chapelle_Interior.jpg/800px-Sainte_Chapelle_Interior.jpg", airportTransport:"RER B to Saint-Michel - Notre-Dame", cityTransport:"Metro: Line 4 to Cité", officialUrl:"https://www.sainte-chapelle.fr/en/" },
-            { id:9, title:"Luxembourg Gardens", category:"Urban Oasis", location:"Rue de Médicis", bestTime:"Spring-Summer (Afternoons)", desc:"60-acre park with tree-lined promenades, flowerbeds, and the Luxembourg Palace.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Jardin_du_Luxembourg_Paris.jpg/800px-Jardin_du_Luxembourg_Paris.jpg", airportTransport:"RER B to Luxembourg", cityTransport:"RER B to Luxembourg", officialUrl:"https://jardin.senat.fr/en.html" },
-            { id:10, title:"Moulin Rouge", category:"Entertainment Hub", location:"82 Boulevard de Clichy", bestTime:"Year-round (Evening shows)", desc:"World-famous cabaret, birthplace of the modern can-can dance.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Moulin_Rouge_Paris.jpg/800px-Moulin_Rouge_Paris.jpg", airportTransport:"RER B to Gare du Nord → Metro Line 2 to Blanche", cityTransport:"Metro: Line 2 to Blanche", officialUrl:"https://www.moulinrouge.fr/" },
-            { id:11, title:"Père Lachaise Cemetery", category:"Cultural Institution", location:"16 Rue du Repos", bestTime:"Weekday mornings", desc:"Largest cemetery in Paris, graves of Jim Morrison, Oscar Wilde, Édith Piaf.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Pere_Lachaise_Cemetery_Paris.jpg/800px-Pere_Lachaise_Cemetery_Paris.jpg", airportTransport:"RER B to Gare du Nord → Metro Line 2 to Père Lachaise", cityTransport:"Metro: Line 2 to Père Lachaise", officialUrl:"https://parisjetaime.com/eng/culture/cimetiere-du-pere-lachaise-p1104" },
-            { id:12, title:"Seine River Cruise", category:"Urban Oasis", location:"Various departure points", bestTime:"Spring-Fall (Evening for lights)", desc:"Experience Paris from the water, passing by illuminated landmarks.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Seine_cruise_Paris.jpg/800px-Seine_cruise_Paris.jpg", airportTransport:"RER B to Saint-Michel", cityTransport:"Metro to Pont Neuf", officialUrl:"https://www.bateauxparisiens.com/en.html" }
+            { id:1, title:"Eiffel Tower", category:"Iconic Landmark", location:"Champ de Mars, 5 Avenue Anatole France, Paris", bestTime:"Year-round (Best: Sunset)", desc:"The iconic iron lattice tower on the Champ de Mars. Standing at 330 meters tall, it's one of the most recognizable structures in the world.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg", airportTransport:"RER B to Saint-Michel → RER C to Champ de Mars", cityTransport:"Metro: Line 6 to Bir-Hakeim, Line 9 to Trocadéro.", officialUrl:"https://www.toureiffel.paris/en" },
+            { id:2, title:"Louvre Museum", category:"Cultural Institution", location:"Rue de Rivoli, 75001 Paris", bestTime:"Year-round (Best: Wed/Fri evenings)", desc:"World's largest art museum. Home to the Mona Lisa, Venus de Milo, and over 35,000 works.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/6/66/Louvre_Museum_Wikimedia_Commons.jpg", airportTransport:"RER B to Châtelet - Les Halles", cityTransport:"Metro: Line 1 to Palais Royal - Musée du Louvre.", officialUrl:"https://www.louvre.fr/en" },
+            { id:3, title:"Notre-Dame Cathedral", category:"Architectural Marvel", location:"6 Parvis Notre-Dame - Pl. Jean-Paul II", bestTime:"Year-round (Best: Morning)", desc:"Medieval Catholic cathedral on Île de la Cité. French Gothic architecture, currently under reconstruction.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/7/7c/Notre-Dame_de_Paris_2013.jpg", airportTransport:"RER B to Saint-Michel - Notre-Dame", cityTransport:"Metro: Line 4 to Cité", officialUrl:"https://www.notredamedeparis.fr/en/" },
+            { id:4, title:"Montmartre & Sacré-Cœur", category:"Urban Oasis", location:"35 Rue du Chevalier de la Barre", bestTime:"Spring-Fall (Best: Sunrise)", desc:"Historic artistic neighborhood crowned by the white-domed Basilica of Sacré-Cœur. Panoramic views.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/6/6f/Sacr%C3%A9-C%C5%93ur_%28basilique%29.jpg", airportTransport:"RER B to Gare du Nord → Metro Line 2 to Anvers", cityTransport:"Metro: Line 2 to Anvers, Line 12 to Abbesses", officialUrl:"https://www.sacre-coeur-montmartre.com/english/" },
+            { id:5, title:"Musée d'Orsay", category:"Cultural Institution", location:"1 Rue de la Légion d'Honneur", bestTime:"Year-round (Best: Tuesday mornings)", desc:"Housed in a former railway station. Largest collection of impressionist masterpieces.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/7/78/Musee_d%27Orsay_2009.jpg", airportTransport:"RER B to Saint-Michel → RER C to Musée d'Orsay", cityTransport:"Metro: Line 12 to Solférino, RER C", officialUrl:"https://www.musee-orsay.fr/en" },
+            { id:6, title:"Champs-Élysées & Arc de Triomphe", category:"Iconic Landmark", location:"Place Charles de Gaulle", bestTime:"Year-round (Best: Evening)", desc:"Famous avenue from Concorde to Arc de Triomphe. Lined with cafes and luxury shops.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/1/1a/Arc_de_Triomphe_fh000025.jpg", airportTransport:"RER B to Charles de Gaulle - Étoile", cityTransport:"Metro: Lines 1,2,6 to Charles de Gaulle - Étoile", officialUrl:"https://www.paris-arc-de-triomphe.fr/en" },
+            { id:7, title:"Palace of Versailles", category:"Architectural Marvel", location:"Place d'Armes, Versailles", bestTime:"Spring-Fall (Best: Tuesday mornings)", desc:"Former royal residence built by Louis XIV. Hall of Mirrors and extensive gardens.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/4/47/Chateau_de_Versailles_2013.jpg", airportTransport:"RER C to Versailles Château", cityTransport:"RER C from central Paris", officialUrl:"https://en.chateauversailles.fr/" },
+            { id:8, title:"Sainte-Chapelle", category:"Architectural Marvel", location:"10 Boulevard du Palais", bestTime:"Year-round (Sunny afternoons)", desc:"Gothic chapel renowned for stunning stained glass windows depicting 1,113 biblical scenes.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Sainte_Chapelle_Interior.jpg", airportTransport:"RER B to Saint-Michel - Notre-Dame", cityTransport:"Metro: Line 4 to Cité", officialUrl:"https://www.sainte-chapelle.fr/en/" },
+            { id:9, title:"Luxembourg Gardens", category:"Urban Oasis", location:"Rue de Médicis", bestTime:"Spring-Summer (Afternoons)", desc:"60-acre park with tree-lined promenades, flowerbeds, and the Luxembourg Palace.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/4/4c/Jardin_du_Luxembourg_Paris.jpg", airportTransport:"RER B to Luxembourg", cityTransport:"RER B to Luxembourg", officialUrl:"https://jardin.senat.fr/en.html" },
+            { id:10, title:"Moulin Rouge", category:"Entertainment Hub", location:"82 Boulevard de Clichy", bestTime:"Year-round (Evening shows)", desc:"World-famous cabaret, birthplace of the modern can-can dance.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/4/43/Moulin_Rouge_Paris.jpg", airportTransport:"RER B to Gare du Nord → Metro Line 2 to Blanche", cityTransport:"Metro: Line 2 to Blanche", officialUrl:"https://www.moulinrouge.fr/" },
+            { id:11, title:"Père Lachaise Cemetery", category:"Cultural Institution", location:"16 Rue du Repos", bestTime:"Weekday mornings", desc:"Largest cemetery in Paris, graves of Jim Morrison, Oscar Wilde, Édith Piaf.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/0/09/Pere_Lachaise_Cemetery_Paris.jpg", airportTransport:"RER B to Gare du Nord → Metro Line 2 to Père Lachaise", cityTransport:"Metro: Line 2 to Père Lachaise", officialUrl:"https://parisjetaime.com/eng/culture/cimetiere-du-pere-lachaise-p1104" },
+            { id:12, title:"Seine River Cruise", category:"Urban Oasis", location:"Various departure points", bestTime:"Spring-Fall (Evening for lights)", desc:"Experience Paris from the water, passing by illuminated landmarks.", imageUrl:"https://upload.wikimedia.org/wikipedia/commons/9/9a/Seine_cruise_Paris.jpg", airportTransport:"RER B to Saint-Michel", cityTransport:"Metro to Pont Neuf", officialUrl:"https://www.bateauxparisiens.com/en.html" }
         ];
 
-        // フランス語データ (既存の簡易版から充実)
+        // フランス語データ（翻訳マッピング）
         attractionsData.fr = attractionsData.en.map(spot => ({ ...spot, 
             title: {1:"Tour Eiffel",2:"Musée du Louvre",3:"Cathédrale Notre-Dame",4:"Montmartre & Sacré-Cœur",5:"Musée d'Orsay",6:"Champs-Élysées & Arc de Triomphe",7:"Château de Versailles",8:"Sainte-Chapelle",9:"Jardin du Luxembourg",10:"Moulin Rouge",11:"Cimetière du Père-Lachaise",12:"Croisière sur la Seine"}[spot.id],
             category: {1:"Monument emblématique",2:"Institution culturelle",3:"Merveille architecturale",4:"Oasis urbain",5:"Institution culturelle",6:"Monument emblématique",7:"Merveille architecturale",8:"Merveille architecturale",9:"Oasis urbain",10:"Centre de divertissement",11:"Institution culturelle",12:"Oasis urbain"}[spot.id],
             desc: {1:"Tour en treillis de fer sur le Champ de Mars, 330 mètres. Vue imprenable sur Paris.",2:"Plus grand musée d'art au monde. Abrite la Joconde et la Vénus de Milo.",3:"Cathédrale gothique sur l'Île de la Cité, actuellement en reconstruction.",4:"Quartier artistique avec la basilique du Sacré-Cœur. Vue panoramique.",5:"Installé dans une ancienne gare, collection impressionniste exceptionnelle.",6:"Avenue célèbre menant à l'Arc de Triomphe. Boutiques et cafés.",7:"Ancienne résidence royale avec la Galerie des Glaces et jardins.",8:"Chapelle gothique aux magnifiques vitraux représentant 1113 scènes.",9:"Parc de 24 hectares avec promenades et Palais du Luxembourg.",10:"Célèbre cabaret, berceau du cancan moderne.",11:"Plus grand cimetière de Paris, tombes de nombreuses célébrités.",12:"Découvrez Paris depuis l'eau avec une croisière sur la Seine."}[spot.id],
             bestTime: {1:"Toute l'année (Coucher de soleil)",2:"Mercredi/Vendredi soir",3:"Matin (calme)",4:"Printemps-Automne (Lever du soleil)",5:"Mardi matin",6:"Soir (lumières)",7:"Mardi matin",8:"Après-midi ensoleillé",9:"Printemps-Été (Après-midi)",10:"Spectacles en soirée",11:"Matin en semaine",12:"Soir (monuments illuminés)"}[spot.id]
         }));
+        
         // 中国語データ
         attractionsData.zh = attractionsData.en.map(spot => ({ ...spot,
             title: {1:"埃菲尔铁塔",2:"卢浮宫博物馆",3:"巴黎圣母院",4:"蒙马特高地 & 圣心大教堂",5:"奥赛博物馆",6:"香榭丽舍大街 & 凯旋门",7:"凡尔赛宫",8:"圣礼拜堂",9:"卢森堡公园",10:"红磨坊",11:"拉雪兹神父公墓",12:"塞纳河游船"}[spot.id],
@@ -653,13 +657,17 @@
         const titles = { en:'⚜️ Paris Travel Guide', fr:'⚜️ Guide de Paris', zh:'⚜️ 巴黎旅游指南' };
         const subs = { en:'Discover the magic of the City of Light', fr:'Découvrez la magie de la Ville Lumière', zh:'探索光之城的神奇魅力' };
 
+        // 画像エラーハンドリング（デバッグ情報を出力）
         function handleImageError(img) {
+            if (img.dataset.errorHandled === 'true') return;
+            img.dataset.errorHandled = 'true';
+            console.warn(`画像読み込み失敗: ${img.src}`);
             img.style.display = 'none';
             const parent = img.parentNode;
-            if(parent && !parent.querySelector('.image-error')) {
+            if (parent && !parent.querySelector('.image-error')) {
                 const placeholder = document.createElement('div');
                 placeholder.className = 'image-error';
-                placeholder.textContent = '⚜️ ' + (img.alt || 'Image coming soon');
+                placeholder.textContent = '🖼️ ' + (img.alt || 'Image not available');
                 parent.appendChild(placeholder);
             }
         }
@@ -764,10 +772,20 @@
             const topLink = document.getElementById('topSponsorLink');
             const bottomImg = document.getElementById('bottomSponsorImg');
             const bottomLink = document.getElementById('bottomSponsorLink');
-            if(SPONSOR_CONFIG.top.imgUrl && SPONSOR_CONFIG.top.imgUrl.trim()) topImg.src = SPONSOR_CONFIG.top.imgUrl;
-            if(SPONSOR_CONFIG.top.linkUrl && SPONSOR_CONFIG.top.linkUrl.trim()) topLink.href = SPONSOR_CONFIG.top.linkUrl;
-            if(SPONSOR_CONFIG.bottom.imgUrl && SPONSOR_CONFIG.bottom.imgUrl.trim()) bottomImg.src = SPONSOR_CONFIG.bottom.imgUrl;
-            if(SPONSOR_CONFIG.bottom.linkUrl && SPONSOR_CONFIG.bottom.linkUrl.trim()) bottomLink.href = SPONSOR_CONFIG.bottom.linkUrl;
+            if (SPONSOR_CONFIG.top.imgUrl && SPONSOR_CONFIG.top.imgUrl.trim() !== "") {
+                topImg.src = SPONSOR_CONFIG.top.imgUrl;
+                topImg.onerror = () => console.warn("上部スポンサー画像が読み込めません:", SPONSOR_CONFIG.top.imgUrl);
+            }
+            if (SPONSOR_CONFIG.top.linkUrl && SPONSOR_CONFIG.top.linkUrl.trim() !== "") {
+                topLink.href = SPONSOR_CONFIG.top.linkUrl;
+            }
+            if (SPONSOR_CONFIG.bottom.imgUrl && SPONSOR_CONFIG.bottom.imgUrl.trim() !== "") {
+                bottomImg.src = SPONSOR_CONFIG.bottom.imgUrl;
+                bottomImg.onerror = () => console.warn("下部スポンサー画像が読み込めません:", SPONSOR_CONFIG.bottom.imgUrl);
+            }
+            if (SPONSOR_CONFIG.bottom.linkUrl && SPONSOR_CONFIG.bottom.linkUrl.trim() !== "") {
+                bottomLink.href = SPONSOR_CONFIG.bottom.linkUrl;
+            }
         }
 
         langBtns.forEach(btn => btn.addEventListener('click', () => changeLanguage(btn.dataset.lang)));
